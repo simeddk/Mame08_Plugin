@@ -9,9 +9,13 @@ public:
 	FButtonCommand();
 	~FButtonCommand();
 
-protected:
+public:
 	virtual void RegisterCommands() override;
+
+private:
+	void OnClicked();
 
 public:
 	TSharedPtr<FUICommandInfo> LoadMeshID;
+	TSharedPtr<FUICommandList> LoadMeshCommand;
 };
