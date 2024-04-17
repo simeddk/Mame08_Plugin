@@ -1,6 +1,9 @@
 #include "ToyPlugin.h"
 #include "LevelEditor.h"
+#include "GameplayDebugger.h"
 #include "Toolbar/ButtonCommand.h"
+#include "Toolbar/IconStyle.h"
+#include "DebuggerCategory/DebuggerCategory.h"
 
 #define LOCTEXT_NAMESPACE "FToyPluginModule"
 
@@ -8,33 +11,65 @@ void FToyPluginModule::StartupModule()
 {
 	UE_LOG(LogTemp, Error, TEXT("Startup Toy Plugin"));
 
-	FButtonCommand::Register();
-	Extender = MakeShareable(new FExtender());
-	
-	FToolBarExtensionDelegate toolBarExtensionDelegate = FToolBarExtensionDelegate::CreateRaw(this, &FToyPluginModule::AddToolBar);
-	
-	Extender->AddToolBarExtension("Compile", EExtensionHook::Before, FButtonCommand::Get().LoadMeshCommand, toolBarExtensionDelegate);
+	//Toolbar
+	{
+		FIconStyle::Get();
 
-	FLevelEditorModule& levelEditor =  FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
-	levelEditor.GetToolBarExtensibilityManager()->AddExtender(Extender);
+		FButtonCommand::Register();
+		Extender = MakeShareable(new FExtender());
+
+		FToolBarExtensionDelegate toolBarLoadMeshDelegate = FToolBarExtensionDelegate::CreateRaw(this, &FToyPluginModule::AddToolBar_LoadMesh);
+		Extender->AddToolBarExtension("Compile", EExtensionHook::Before, FButtonCommand::Get().Command, toolBarLoadMeshDelegate);
+
+		FToolBarExtensionDelegate toolBarOpenViewerDelegate = FToolBarExtensionDelegate::CreateRaw(this, &FToyPluginModule::AddToolBar_OpenViewer);
+		Extender->AddToolBarExtension("Compile", EExtensionHook::Before, FButtonCommand::Get().Command, toolBarOpenViewerDelegate);
+
+		FLevelEditorModule& levelEditor = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
+		levelEditor.GetToolBarExtensibilityManager()->AddExtender(Extender);
+	}
+
+	//GamePlayDebuggerCategory
+	{
+		IGameplayDebugger::FOnGetCategory makeCategoryInstanceDelegate = IGameplayDebugger::FOnGetCategory::CreateStatic(&FDebuggerCategory::MakeInstance);
+
+		IGameplayDebugger& gameplayDebugger = IGameplayDebugger::Get();
+		gameplayDebugger.Get().RegisterCategory("AwesomeCategory", makeCategoryInstanceDelegate, EGameplayDebuggerCategoryState::EnabledInGameAndSimulate, 5);
+		gameplayDebugger.NotifyCategoriesChanged();
+	}
 }
 
 void FToyPluginModule::ShutdownModule()
 {
 	UE_LOG(LogTemp, Error, TEXT("Shutdown Toy Plugin"));
+
+	if (IGameplayDebugger::IsAvailable())
+		IGameplayDebugger::Get().UnregisterCategory("AwesomeCategory");
+
+	FIconStyle::Shutdown();
 }
 
-void FToyPluginModule::AddToolBar(FToolBarBuilder& InBuilder)
+void FToyPluginModule::AddToolBar_LoadMesh(FToolBarBuilder& InBuilder)
 {
-	FSlateIcon icon = FSlateIcon(FEditorStyle::GetStyleSetName(), "LevelEditor.SelectMode");
-
+	InBuilder.AddSeparator();
 	InBuilder.AddToolBarButton
 	(
 		FButtonCommand::Get().LoadMeshID,
-		"Test",
+		NAME_None,
 		FText::FromString("Load Mesh"),
 		FText::FromString("Load Mesh Data"),
-		icon
+		FIconStyle::Get()->LoadMeshIcon
+	);
+}
+
+void FToyPluginModule::AddToolBar_OpenViewer(FToolBarBuilder& InBuilder)
+{
+	InBuilder.AddToolBarButton
+	(
+		FButtonCommand::Get().OpenViewerID,
+		NAME_None,
+		FText::FromString("Open Viewer"),
+		FText::FromString("Open Static Mesh Asset Viewer"),
+		FIconStyle::Get()->OpenViewerIcon
 	);
 }
 
