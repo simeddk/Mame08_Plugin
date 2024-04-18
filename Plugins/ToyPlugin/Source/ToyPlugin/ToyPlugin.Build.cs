@@ -26,7 +26,8 @@ public class ToyPlugin : ModuleRules
 			"SlateCore",
 			"EditorStyle",
 			"Projects",
-			"GameplayDebugger"
+			"GameplayDebugger",
+			"Toy"
 		});
 		
 		
