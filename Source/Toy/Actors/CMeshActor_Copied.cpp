@@ -1,51 +1,54 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "CMeshActor_Copied.h"
+#include "Global.h"
+#include "ProceduralMeshComponent.h"
+#include "Materials/MaterialInstanceConstant.h"
 
-// Sets default values
 ACMeshActor_Copied::ACMeshActor_Copied()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	bRunConstructionScriptOnDrag = false;
 
+	CHelpers::CreateSceneComponent(this, &ProcMesh, "ProcMesh");
 }
 
 void ACMeshActor_Copied::OnConstruction(const FTransform& Transform)
 {
+	Super::OnConstruction(Transform);
+
+	ProcMesh->CreateMeshSection(0, Positions, Indices, Normals, UVs, Colors, TArray<FProcMeshTangent>(), true);
+
+	CHelpers::GetAssetDynamic<UMaterialInstanceConstant>(&Material, "MaterialInstanceConstant'/Game/Materials/MAT_Master_Inst.MAT_Master_Inst'");
+	ProcMesh->SetMaterial(0, Material);
 }
+
+
+void ACMeshActor_Copied::BeginPlay()
+{
+	Super::BeginPlay();
+
+}
+
 
 void ACMeshActor_Copied::SetPositions(const TArray<FVector>& InPositions)
 {
+	Positions = InPositions;
 }
 
 void ACMeshActor_Copied::SetIndices(const TArray<int32>& InIndices)
 {
+	Indices = InIndices;
 }
 
 void ACMeshActor_Copied::SetNormals(const TArray<FVector>& InNormals)
 {
+	Normals = InNormals;
 }
 
 void ACMeshActor_Copied::SetUVs(const TArray<FVector2D>& InUVs)
 {
+	UVs = InUVs;
 }
 
 void ACMeshActor_Copied::SetColors(const TArray<FColor>& InColors)
 {
+	Colors = InColors;
 }
-
-// Called when the game starts or when spawned
-void ACMeshActor_Copied::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ACMeshActor_Copied::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

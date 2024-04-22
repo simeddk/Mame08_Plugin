@@ -14,7 +14,9 @@ public:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
-	//Todo.
+protected:
+	virtual void BeginPlay() override;
+
 public:
 	void SetPositions(const TArray<FVector>& InPositions);
 	void SetIndices(const TArray<int32>& InIndices);
@@ -22,8 +24,12 @@ public:
 	void SetUVs(const TArray<FVector2D>& InUVs);
 	void SetColors(const TArray<FColor>& InColors);
 
-protected:
-	virtual void BeginPlay() override;
+private:
+	UPROPERTY(VisibleDefaultsOnly)
+		class UProceduralMeshComponent* ProcMesh;
+
+	UPROPERTY(VisibleDefaultsOnly)
+		class UMaterialInstanceConstant* Material;
 
 private:
 	TArray<FVector> Positions;

@@ -29,6 +29,8 @@ public class ToyPlugin : ModuleRules
 			"GameplayDebugger",
 			"DesktopPlatform",
 			"MainFrame",
+			"UnrealEd",
+			"ProceduralMeshComponent",
 			"Toy"
 		});
 		
