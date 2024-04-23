@@ -8,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "AssetTools/CDataAsset.h" //Todo. 이것만 가지고는 빌드가 안된다.(게임.build.cs)
 
 //////////////////////////////////////////////////////////////////////////
 // AToyCharacter

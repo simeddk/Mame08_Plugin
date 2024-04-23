@@ -6,6 +6,6 @@ FAssetViewer_Viewport_Client::FAssetViewer_Viewport_Client(FPreviewScene* InScen
 {
 	SetViewMode(VMI_Lit);
 
-
-	//Todo. 기본으로 비출 카메라 위치...
+	SetViewRotation(FRotator(-40, -90, 0));
+	SetViewLocationForOrbiting(FVector(0, 0, 75), 1000.f);
 }
