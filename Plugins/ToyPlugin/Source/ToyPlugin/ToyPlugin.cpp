@@ -65,9 +65,6 @@ void FToyPluginModule::ShutdownModule()
 {
 	UE_LOG(LogTemp, Error, TEXT("Shutdown Toy Plugin"));
 
-	//Todo. 끌 때 터진다ㅠㅠ
-	//FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get().UnregisterAssetTypeActions(AssetTypeAction.ToSharedRef());
-
 	if (IGameplayDebugger::IsAvailable())
 		IGameplayDebugger::Get().UnregisterCategory("AwesomeCategory");
 
